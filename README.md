@@ -42,3 +42,7 @@ from tensorflow.keras.layers import Dense
 model = Sequential()
 model.add(Dense(64, activation='relu', input_shape=(11,)))
 model.add(Dense(1, activation='sigmoid'))
+```
+
+✅ The model achieved an **accuracy of 86%** on the test dataset.  
+📊 Additionally, training and validation performance was tracked using **loss and accuracy graphs** to monitor the model's learning behavior and evaluate for **overfitting or underfitting**.
