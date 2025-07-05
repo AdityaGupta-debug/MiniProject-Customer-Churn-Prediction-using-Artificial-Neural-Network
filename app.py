@@ -1,0 +1,48 @@
+import streamlit as st
+import pickle
+import tensorflow as tf
+import pandas as pd 
+
+
+model = tf.keras.models.load_model('model.h5')
+
+with open('transformer.pkl', 'rb') as file:
+    transformer = pickle.load(file)
+
+st.title("Customer Churn Prediction")
+st.write("This app predicts whether a customer will churn based on their account information.")
+
+st.write("Please enter the following details:")
+CreditScore = st.number_input("Credit Score", min_value=300, max_value=850, value=600)
+Geography = st.selectbox("Geography", options=['France', 'Spain', 'Germany'])
+Gender = st.selectbox('Gender', options = ['Male', 'Female'])
+Gender == 1 if Gender == 'Male' else 0
+Age = st.number_input("Age", min_value=18, max_value=100, value=30)
+Tenure = st.number_input("Tenure (in years)", min_value=0, max_value=10, value=1)
+Balance = st.number_input("Balance", min_value=0.0, max_value=100000.0, value=5000.0)
+NumOfProducts = st.number_input("Number of Products", min_value=1, max_value=4, value=1)
+HasCrCard = st.selectbox("Has Credit Card", options=['Yes', 'No'])
+HasCrCard = 1 if HasCrCard == 'Yes' else 0
+IsActiveMember = st.selectbox("Is Active Member", options=['Yes', 'No'])    
+IsActiveMember = 1 if IsActiveMember == 'Yes' else 0
+EstimatedSalary = st.number_input("Estimated Salary", min_value=0.0, max_value= 200000.0, value=50000.0)
+
+
+if st.button("Predict"):
+    input_data = pd.DataFrame({
+        'CreditScore': [CreditScore],
+        'Geography': [Geography],
+        'Gender' : [Gender],
+        'Age': [Age], 
+        'Tenure': [Tenure],
+        'Balance': [Balance],      
+        'NumOfProducts': [NumOfProducts],
+        'HasCrCard': [HasCrCard],
+        'IsActiveMember': [IsActiveMember],
+        'EstimatedSalary': [EstimatedSalary]
+    })         
+    transformed_input = transformer.transform(input_data)
+    prediction = model.predict(transformed_input)
+    result = "Churn" if prediction[0][0] > 0.5 else "Not Churn"
+    st.subheader("Prediction Result")
+    st.write(f"The customer is likely to **{result}**.")
